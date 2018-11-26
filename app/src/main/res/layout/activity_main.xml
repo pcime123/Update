@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:background="@color/black">
+
+
+    <ScrollView
+        android:layout_width="310dp"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <LinearLayout
+            android:layout_width="300dp"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+
+
+            <Button
+                android:id="@+id/bt_ip"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_ip"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/ip_app"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_viewer"
+                android:layout_width="match_parent"
+                android:layout_height="90dp"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_sdi"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/viewer_app"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_tdrc"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_tdrc"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/tdrc"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_tdru"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_tdru"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/tdru"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_launcher"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_launcher"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/launcher_app"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_packet"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_manual"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/packet_app"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+            <Button
+                android:id="@+id/bt_update"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="8dp"
+                android:layout_marginTop="8dp"
+                android:background="@drawable/sel_update"
+                android:paddingBottom="30dp"
+                android:paddingTop="30dp"
+                android:text="@string/update_app"
+                android:textColor="@color/WhiteSmoke"
+                android:textSize="20sp" />
+
+        </LinearLayout>
+    </ScrollView>
+
+    <FrameLayout
+        android:id="@+id/fragment_container"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        android:layout_marginTop="8dp"
+        android:layout_marginStart="310dp"
+        />
+</android.support.constraint.ConstraintLayout>

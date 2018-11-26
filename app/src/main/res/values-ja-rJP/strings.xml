@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">アップデート</string>
+    <string name="not_installed">設置されませんでした。</string>
+    <string name="check_update">アップデート確認</string>
+    <string name="updating">アップデートを進めます。 少々お待ちください。</string>
+    <string name="release_not_found">最新バージョンは見つかりません。</string>
+    <string name="checking_updates">アップデート確認中</string>
+    <string name="no_updates">アップデート無し</string>
+    <string name="updates_available">アップデート可能</string>
+    <string name="connection_error">アップデートに失敗しました。</string>
+    <string name="msg_no_connection">接続されていません。</string>
+    <string name="check_wifi">Wi-Fi確認</string>
+    <string name="msg_ok_connection">Wi-Fiまたはイーサネット接続確認‥OK</string>
+    <string name="version_installed">現在バージョン</string>
+    <string name="new_version">新しいバージョン</string>
+    <string name="check">確認</string>
+    <string name="update">アップデート</string>
+    <string name="ip_app_update">IP アプリ アップデート</string>
+    <string name="launcher_update">Launcherアプリアップデート</string>
+    <string name="manual_update">Manual アプリ アップデート</string>
+    <string name="tdrc_app_update">TDRC アプリ アップデート</string>
+    <string name="tdru_app_update">TDRU アプリ アップデート</string>
+    <string name="update_app_update">Update アプリアップデート</string>
+    <string name="viewer_app_update">Viewer アプリ アップデート</string>
+    <string name="packet_update">Packetアプリアップデート</string>
+</resources>

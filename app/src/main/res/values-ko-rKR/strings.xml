@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">업데이트</string>
+    <string name="not_installed">설치되지 않았습니다.</string>
+    <string name="check_update">업데이트 확인</string>
+    <string name="updating">업데이트를 진행합니다. 잠시만 기다려주세요.</string>
+    <string name="release_not_found">최신 버전을 찾을 수 없습니다.</string>
+    <string name="checking_updates">업데이트 확인중</string>
+    <string name="no_updates">업데이트 없음</string>
+    <string name="updates_available">업데이트 가능</string>
+    <string name="connection_error">업데이트 연결 실패</string>
+    <string name="check_wifi">Wi-Fi 확인</string>
+    <string name="msg_no_connection">연결되지 않았습니다.</string>
+    <string name="msg_ok_connection">Wi-Fi 또는 이더넷 연결 확인..OK</string>
+    <string name="version_installed">현재 버전</string>
+    <string name="new_version">지금 버전</string>
+    <string name="check">확인</string>
+    <string name="update">업데이트</string>
+    <string name="ip_app_update">IP 앱 업데이트</string>
+    <string name="launcher_update">Launcher 앱 업데이트</string>
+    <string name="manual_update">Manual 앱 업데이트</string>
+    <string name="tdrc_app_update">TDRC 앱 업데이트</string>
+    <string name="tdru_app_update">TDRU 앱 업데이트</string>
+    <string name="update_app_update">Update 앱 업데이트</string>
+    <string name="viewer_app_update">Viewer 앱 업데이트</string>
+    <string name="packet_update">Packet 앱 업데이트</string>
+</resources>
