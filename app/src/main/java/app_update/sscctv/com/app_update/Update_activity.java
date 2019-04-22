@@ -51,11 +51,10 @@ import rx.subjects.PublishSubject;
 
 public class Update_activity extends Fragment {
 
-
     private static final String UPDATE_CHANNEL = "stable";
 
     private static final String PACKAGE_LAUNCHER = "app_update.sscctv.com.app_update";
-    private static final String TAG = "App Update[Viewer]";
+    private static final String TAG = "App Update[Update]";
     private TextView now_ver, new_ver, message;
     private Button checkButton, updateButton;
 
@@ -76,7 +75,7 @@ public class Update_activity extends Fragment {
         mUpdateService = new UpdateService();
         mIsOnline = PublishSubject.create();
 
-        View view = inflater.inflate(R.layout.activity_update, null);
+        final View view = inflater.inflate(R.layout.activity_update, null);
         now_ver = view.findViewById(R.id.update_version);
         new_ver = view.findViewById(R.id.update_latest);
 
@@ -125,7 +124,6 @@ public class Update_activity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -138,12 +136,12 @@ public class Update_activity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+//                        Log.d(TAG, "Update check done----------------------");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+//                        Log.d(TAG, "Update check", e);
                     }
 
                     @Override
@@ -321,6 +319,7 @@ public class Update_activity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -359,6 +358,13 @@ public class Update_activity extends Fragment {
                     }
                 })
                 .last() // 마지막 상태만 취함
+                .onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+
+                        return false;
+                    }
+                })
                 .doOnNext(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean updateAvailable) {
@@ -366,6 +372,9 @@ public class Update_activity extends Fragment {
 
                         if (!updateAvailable) {
                             message.setText(getString(R.string.no_updates));
+                            if(new_ver.getText().toString().isEmpty()){
+                                message.setText(getString(R.string.connection_error));
+                            }
                         } else {
                             message.setText(getString(R.string.updates_available));
                         }
@@ -483,8 +492,11 @@ public class Update_activity extends Fragment {
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
+
 
     public boolean versionCheck(Boolean updateAvailable, Package pkg) {
         boolean updated;
@@ -507,8 +519,7 @@ public class Update_activity extends Fragment {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "0.0.00";
+            return "0.0.0";
         }
     }
-
 }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 
@@ -17,7 +18,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final String TAG = "App Update[Main]";
+    private static final String TAG = "Update_1903281900";
     private final int ip_version = 1;
     private final int viewer_version = 2;
     private final int tdrc_version = 3;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Log.d(TAG, "Start UpdateApp");
             setContentView(R.layout.activity_main);
 
         bt_ip = findViewById(R.id.bt_ip);

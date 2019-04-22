@@ -50,8 +50,6 @@ import rx.schedulers.Schedulers;
 import rx.subjects.PublishSubject;
 
 public class Packet_activity extends Fragment {
-
-
     private static final String UPDATE_CHANNEL = "stable";
 
     private static final String PACKAGE_LAUNCHER = "com.sscctv.packetgenerator";
@@ -76,7 +74,7 @@ public class Packet_activity extends Fragment {
         mUpdateService = new UpdateService();
         mIsOnline = PublishSubject.create();
 
-        View view = inflater.inflate(R.layout.activity_packet, null);
+        final View view = inflater.inflate(R.layout.activity_packet, null);
         now_ver = view.findViewById(R.id.packet_version);
         new_ver = view.findViewById(R.id.packet_latest);
 
@@ -97,7 +95,6 @@ public class Packet_activity extends Fragment {
                                 // 네트워크 연결 상태가 바뀌면 UI를 업데이트함
                                 if (!isOnline) {
                                     message.setText(getString(R.string.msg_no_connection));
-
                                     checkButton.setText(R.string.check_wifi);
                                     updateButton.setVisibility(Button.INVISIBLE);
                                 } else {
@@ -105,7 +102,6 @@ public class Packet_activity extends Fragment {
                                     checkButton.setText(R.string.check_update);
                                     updateButton.setVisibility(Button.VISIBLE);
                                 }
-
                                 checkButton.setEnabled(true);
                                 updateButton.setEnabled(false);
                             }
@@ -125,7 +121,6 @@ public class Packet_activity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -138,19 +133,18 @@ public class Packet_activity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+//                        Log.d(TAG, "Update check done----------------------");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+//                        Log.d(TAG, "Update check", e);
                     }
 
                     @Override
                     public void onNext(Boolean aBoolean) {
                     }
                 });
-
         // 업데이트 버튼을 누르면 업데이트를 시작
         RxView
                 .clicks(updateButton)
@@ -298,8 +292,8 @@ public class Packet_activity extends Fragment {
         try {
             pi = pm.getPackageInfo(PACKAGE_LAUNCHER, 0);
 //            v3 = Version.valueOf(pi.versionName);
-            Log.d(TAG, "Viewer" + pi.versionName);
-            Log.d(TAG, "semver" + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
+            Log.d(TAG, "Packet: " + pi.versionName);
+            Log.d(TAG, "server: " + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
             now_ver.setText(pi.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             now_ver.setText(R.string.not_installed);
@@ -310,7 +304,6 @@ public class Packet_activity extends Fragment {
     }
 
     private Observable<Boolean> updatePackageState() {
-
         return Observable.just(true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<Boolean>() {
@@ -321,6 +314,7 @@ public class Packet_activity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -359,6 +353,13 @@ public class Packet_activity extends Fragment {
                     }
                 })
                 .last() // 마지막 상태만 취함
+                .onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+
+                        return false;
+                    }
+                })
                 .doOnNext(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean updateAvailable) {
@@ -483,6 +484,8 @@ public class Packet_activity extends Fragment {
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
 
@@ -507,7 +510,7 @@ public class Packet_activity extends Fragment {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "0.0.00";
+            return "0.0.0";
         }
     }
 

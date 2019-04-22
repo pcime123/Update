@@ -74,7 +74,7 @@ public class TDRC_acitvity extends Fragment {
         mUpdateService = new UpdateService();
         mIsOnline = PublishSubject.create();
 
-        View view = inflater.inflate(R.layout.activity_tdrc, null);
+        final View view = inflater.inflate(R.layout.activity_tdrc, null);
         now_ver = view.findViewById(R.id.tdrc_version);
         new_ver = view.findViewById(R.id.tdrc_latest);
 
@@ -95,7 +95,6 @@ public class TDRC_acitvity extends Fragment {
                                 // 네트워크 연결 상태가 바뀌면 UI를 업데이트함
                                 if (!isOnline) {
                                     message.setText(getString(R.string.msg_no_connection));
-
                                     checkButton.setText(R.string.check_wifi);
                                     updateButton.setVisibility(Button.INVISIBLE);
                                 } else {
@@ -103,7 +102,6 @@ public class TDRC_acitvity extends Fragment {
                                     checkButton.setText(R.string.check_update);
                                     updateButton.setVisibility(Button.VISIBLE);
                                 }
-
                                 checkButton.setEnabled(true);
                                 updateButton.setEnabled(false);
                             }
@@ -123,7 +121,6 @@ public class TDRC_acitvity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -136,12 +133,12 @@ public class TDRC_acitvity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+//                        Log.d(TAG, "Update check done----------------------");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+//                        Log.d(TAG, "Update check", e);
                     }
 
                     @Override
@@ -296,8 +293,8 @@ public class TDRC_acitvity extends Fragment {
         try {
             pi = pm.getPackageInfo(PACKAGE_LAUNCHER, 0);
 //            v3 = Version.valueOf(pi.versionName);
-            Log.d(TAG, "Viewer" + pi.versionName);
-            Log.d(TAG, "semver" + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
+            Log.d(TAG, "TDRC: " + pi.versionName);
+            Log.d(TAG, "server: " + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
             now_ver.setText(pi.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             now_ver.setText(R.string.not_installed);
@@ -319,6 +316,7 @@ public class TDRC_acitvity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -357,6 +355,13 @@ public class TDRC_acitvity extends Fragment {
                     }
                 })
                 .last() // 마지막 상태만 취함
+                .onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+
+                        return false;
+                    }
+                })
                 .doOnNext(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean updateAvailable) {
@@ -364,6 +369,9 @@ public class TDRC_acitvity extends Fragment {
 
                         if (!updateAvailable) {
                             message.setText(getString(R.string.no_updates));
+                            if(new_ver.getText().toString().isEmpty()){
+                                message.setText(getString(R.string.connection_error));
+                            }
                         } else {
                             message.setText(getString(R.string.updates_available));
                         }
@@ -481,8 +489,11 @@ public class TDRC_acitvity extends Fragment {
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
+
 
     public boolean versionCheck(Boolean updateAvailable, Package pkg) {
         boolean updated;
@@ -505,7 +516,7 @@ public class TDRC_acitvity extends Fragment {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "0.0.00";
+            return "0.0.0";
         }
     }
 

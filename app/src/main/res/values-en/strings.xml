@@ -8,7 +8,7 @@
     <string name="checking_updates">Checking Update</string>
     <string name="no_updates">No Update</string>
     <string name="updates_available">Update available</string>
-    <string name="connection_error">Connection Error</string>
+    <string name="connection_error">"Failed to connect update server. Please check internet connection status. "</string>
     <string name="msg_no_connection">NO Connection</string>
     <string name="check_wifi">Check Wifi</string>
     <string name="msg_ok_connection">Wi-Fi or Ethernet connection check.. OK</string>
@@ -17,11 +17,12 @@
     <string name="check">Check</string>
     <string name="update">Update</string>
     <string name="ip_app_update">IP App Update</string>
-    <string name="launcher_update">Launcher AppUpdate</string>
+    <string name="launcher_app_update">Launcher AppUpdate</string>
     <string name="manual_update">Manual App Update</string>
     <string name="tdrc_app_update">TDRC App Update</string>
     <string name="tdru_app_update">TDRU App Update</string>
     <string name="update_app_update">Update App Update</string>
     <string name="viewer_app_update">Viewer App Update</string>
-    <string name="packet_update">Packet App Update</string>
+    <string name="packet_app_update">Packet App Update</string>
+
 </resources>

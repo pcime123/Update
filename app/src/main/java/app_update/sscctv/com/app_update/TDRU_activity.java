@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Callable;
 
 import app_update.sscctv.com.app_update.models.Channel;
 import app_update.sscctv.com.app_update.models.Package;
@@ -54,15 +55,16 @@ public class TDRU_activity extends Fragment {
     private static final String UPDATE_CHANNEL = "stable";
 
     private static final String PACKAGE_LAUNCHER = "com.sscctv.tdru";
-    private static final String TAG = "App Update[Viewer]";
+    private static final String TAG = "App Update[TDRU]";
     private TextView now_ver, new_ver, message;
     private Button checkButton, updateButton;
 
     private UpdateService mUpdateService;
     private Subscription mIsOnlineSubscription;
     private PublishSubject<Boolean> mIsOnline;
-
+    private PackageManager pm;
     private Package aPackage;
+    private boolean error = false;
 
     public TDRU_activity() {
 
@@ -75,7 +77,7 @@ public class TDRU_activity extends Fragment {
         mUpdateService = new UpdateService();
         mIsOnline = PublishSubject.create();
 
-        View view = inflater.inflate(R.layout.activity_tdru, null);
+        final View view = inflater.inflate(R.layout.activity_tdru, null);
         now_ver = view.findViewById(R.id.tdru_version);
         new_ver = view.findViewById(R.id.tdru_latest);
 
@@ -89,22 +91,19 @@ public class TDRU_activity extends Fragment {
                         .observeOn(AndroidSchedulers.mainThread())
                         .doOnNext(new Action1<Boolean>() {
                             @Override
-
                             public void call(Boolean isOnline) {
                                 message.setTextColor(Color.WHITE);
-
                                 // 네트워크 연결 상태가 바뀌면 UI를 업데이트함
                                 if (!isOnline) {
                                     message.setText(getString(R.string.msg_no_connection));
-
                                     checkButton.setText(R.string.check_wifi);
                                     updateButton.setVisibility(Button.INVISIBLE);
                                 } else {
                                     message.setText(R.string.msg_ok_connection);
                                     checkButton.setText(R.string.check_update);
                                     updateButton.setVisibility(Button.VISIBLE);
+                                    error = false;
                                 }
-
                                 checkButton.setEnabled(true);
                                 updateButton.setEnabled(false);
                             }
@@ -124,7 +123,6 @@ public class TDRU_activity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -137,19 +135,18 @@ public class TDRU_activity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+                        //Log.d(TAG, "Update check done----------------------");
                     }
-
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+                        //Log.d(TAG, "Update check", e);
                     }
 
                     @Override
                     public void onNext(Boolean aBoolean) {
+//                        Log.d(TAG, "Update onNext");
                     }
                 });
-
         // 업데이트 버튼을 누르면 업데이트를 시작
         RxView
                 .clicks(updateButton)
@@ -158,7 +155,6 @@ public class TDRU_activity extends Fragment {
                     public void call(Void aVoid) {
                         checkButton.setEnabled(false);
                         updateButton.setEnabled(false);
-
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.updating));
                     }
@@ -289,7 +285,6 @@ public class TDRU_activity extends Fragment {
                     }
                 });
 
-
         PackageManager pm = getContext().getPackageManager();
         PackageInfo pi;
         Version v3 = Version.forIntegers(1, 2, 3);
@@ -297,19 +292,17 @@ public class TDRU_activity extends Fragment {
         try {
             pi = pm.getPackageInfo(PACKAGE_LAUNCHER, 0);
 //            v3 = Version.valueOf(pi.versionName);
-            Log.d(TAG, "Viewer" + pi.versionName);
-            Log.d(TAG, "semver" + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
+            Log.d(TAG, "TDRU: " + pi.versionName);
+            Log.d(TAG, "server " + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
             now_ver.setText(pi.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             now_ver.setText(R.string.not_installed);
         }
 
-
         return view;
     }
 
     private Observable<Boolean> updatePackageState() {
-
         return Observable.just(true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<Boolean>() {
@@ -320,6 +313,7 @@ public class TDRU_activity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -358,6 +352,13 @@ public class TDRU_activity extends Fragment {
                     }
                 })
                 .last() // 마지막 상태만 취함
+                .onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+
+                        return false;
+                    }
+                })
                 .doOnNext(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean updateAvailable) {
@@ -365,6 +366,9 @@ public class TDRU_activity extends Fragment {
 
                         if (!updateAvailable) {
                             message.setText(getString(R.string.no_updates));
+                            if(new_ver.getText().toString().isEmpty()){
+                                message.setText(getString(R.string.connection_error));
+                            }
                         } else {
                             message.setText(getString(R.string.updates_available));
                         }
@@ -383,12 +387,10 @@ public class TDRU_activity extends Fragment {
                     @Override
                     public void call(Throwable throwable) {
                         Log.d(TAG, "updatePackageState.onError", throwable);
-
-                        message.setText(getString(R.string.connection_error));
-
                         checkButton.setEnabled(true);
                     }
                 })
+
                 ;
     }
 
@@ -477,11 +479,13 @@ public class TDRU_activity extends Fragment {
                 mIsOnline.onNext(isOnline);
             }
         });
-
+        now_ver.setText(getPackageVersionString(PACKAGE_LAUNCHER));
     }
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
 
@@ -497,6 +501,7 @@ public class TDRU_activity extends Fragment {
 
     }
 
+
     private Version getPackageVersion(String packageName) {
         return Version.valueOf(getPackageVersionString(packageName));
 
@@ -506,7 +511,7 @@ public class TDRU_activity extends Fragment {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "0.0.00";
+            return "0.0.0";
         }
     }
 

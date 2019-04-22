@@ -75,15 +75,13 @@ public class Ip_activity extends Fragment {
         mUpdateService = new UpdateService();
         mIsOnline = PublishSubject.create();
 
-        View view = inflater.inflate(R.layout.activity_ip, null);
+        final View view = inflater.inflate(R.layout.activity_ip, null);
         now_ver = view.findViewById(R.id.ip_version);
         new_ver = view.findViewById(R.id.ip_latest);
 
         checkButton = view.findViewById(R.id.ip_check_btn);
         updateButton = view.findViewById(R.id.ip_update_btn);
         message = view.findViewById(R.id.ip_message);
-
-
 
         Observable.combineLatest(
                 mIsOnline
@@ -98,7 +96,6 @@ public class Ip_activity extends Fragment {
                                 // 네트워크 연결 상태가 바뀌면 UI를 업데이트함
                                 if (!isOnline) {
                                     message.setText(getString(R.string.msg_no_connection));
-
                                     checkButton.setText(R.string.check_wifi);
                                     updateButton.setVisibility(Button.INVISIBLE);
                                 } else {
@@ -106,7 +103,6 @@ public class Ip_activity extends Fragment {
                                     checkButton.setText(R.string.check_update);
                                     updateButton.setVisibility(Button.VISIBLE);
                                 }
-
                                 checkButton.setEnabled(true);
                                 updateButton.setEnabled(false);
                             }
@@ -126,7 +122,6 @@ public class Ip_activity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -139,19 +134,18 @@ public class Ip_activity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+//                        Log.d(TAG, "Update check done----------------------");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+//                        Log.d(TAG, "Update check", e);
                     }
 
                     @Override
                     public void onNext(Boolean aBoolean) {
                     }
                 });
-
         // 업데이트 버튼을 누르면 업데이트를 시작
         RxView
                 .clicks(updateButton)
@@ -188,7 +182,7 @@ public class Ip_activity extends Fragment {
                                 return null;
                         }
 
-                        Log.d(TAG, "---Latest '" + pkg.name + "' version = " + pkg.latest);
+                        Log.d(TAG, "Latest '" + pkg.name + "' version = " + pkg.latest);
 
                         // 릴리스 목록에서 최신판을 찾는다.
                         return mUpdateService.getApi()
@@ -299,8 +293,8 @@ public class Ip_activity extends Fragment {
         try {
             pi = pm.getPackageInfo(PACKAGE_LAUNCHER, 0);
 //            v3 = Version.valueOf(pi.versionName);
-            Log.d(TAG, "ip" + pi.versionName);
-            Log.d(TAG, "semver" + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
+            Log.d(TAG, "ip: " + pi.versionName);
+            Log.d(TAG, "server: " + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
             now_ver.setText(pi.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             now_ver.setText(R.string.not_installed);
@@ -311,7 +305,6 @@ public class Ip_activity extends Fragment {
     }
 
     private Observable<Boolean> updatePackageState() {
-
         return Observable.just(true)
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Action1<Boolean>() {
@@ -322,6 +315,7 @@ public class Ip_activity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -360,6 +354,13 @@ public class Ip_activity extends Fragment {
                     }
                 })
                 .last() // 마지막 상태만 취함
+                .onErrorReturn(new Func1<Throwable, Boolean>() {
+                    @Override
+                    public Boolean call(Throwable throwable) {
+
+                        return false;
+                    }
+                })
                 .doOnNext(new Action1<Boolean>() {
                     @Override
                     public void call(Boolean updateAvailable) {
@@ -367,6 +368,9 @@ public class Ip_activity extends Fragment {
 
                         if (!updateAvailable) {
                             message.setText(getString(R.string.no_updates));
+                            if(new_ver.getText().toString().isEmpty()){
+                                message.setText(getString(R.string.connection_error));
+                            }
                         } else {
                             message.setText(getString(R.string.updates_available));
                         }
@@ -484,6 +488,8 @@ public class Ip_activity extends Fragment {
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
 

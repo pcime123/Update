@@ -124,7 +124,7 @@ public class Viewer_activity extends Fragment {
                                 @Override
                                 public Boolean call() {
                                     startActivity(new Intent(Settings.ACTION_WIFI_SETTINGS));
-                                    Log.d(TAG, "WIFI SETTING GOGO");
+//                                    Log.d(TAG, "WIFI SETTING GOGO");
                                     return true;
                                 }
                             });
@@ -137,12 +137,12 @@ public class Viewer_activity extends Fragment {
                 .subscribe(new Observer<Boolean>() {
                     @Override
                     public void onCompleted() {
-                        Log.d(TAG, "Update check done----------------------");
+//                        Log.d(TAG, "Update check done----------------------");
                     }
 
                     @Override
                     public void onError(Throwable e) {
-                        Log.d(TAG, "Update check", e);
+//                        Log.d(TAG, "Update check", e);
                     }
 
                     @Override
@@ -158,7 +158,6 @@ public class Viewer_activity extends Fragment {
                     public void call(Void aVoid) {
                         checkButton.setEnabled(false);
                         updateButton.setEnabled(false);
-
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.updating));
                     }
@@ -297,8 +296,8 @@ public class Viewer_activity extends Fragment {
         try {
             pi = pm.getPackageInfo(PACKAGE_LAUNCHER, 0);
 //            v3 = Version.valueOf(pi.versionName);
-            Log.d(TAG, "Viewer" + pi.versionName);
-            Log.d(TAG, "semver" + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
+            Log.d(TAG, "Viewer: " + pi.versionName);
+            Log.d(TAG, "server: " + v3.getMajorVersion() + " " + v3.getMinorVersion() + " " + v3.getPatchVersion());
             now_ver.setText(pi.versionName);
         } catch (PackageManager.NameNotFoundException e) {
             now_ver.setText(R.string.not_installed);
@@ -320,6 +319,7 @@ public class Viewer_activity extends Fragment {
 
                         message.setTextColor(Color.WHITE);
                         message.setText(getString(R.string.checking_updates));
+                        checkButton.setEnabled(false);
 
                     }
                 })
@@ -365,6 +365,9 @@ public class Viewer_activity extends Fragment {
 
                         if (!updateAvailable) {
                             message.setText(getString(R.string.no_updates));
+                            if(new_ver.getText().toString().isEmpty()){
+                                message.setText(getString(R.string.connection_error));
+                            }
                         } else {
                             message.setText(getString(R.string.updates_available));
                         }
@@ -482,8 +485,11 @@ public class Viewer_activity extends Fragment {
 
     @Override
     public void onPause() {
+        mIsOnlineSubscription.unsubscribe();
+        mIsOnlineSubscription = null;
         super.onPause();
     }
+
 
     public boolean versionCheck(Boolean updateAvailable, Package pkg) {
         boolean updated;
@@ -506,7 +512,7 @@ public class Viewer_activity extends Fragment {
         try {
             return getContext().getPackageManager().getPackageInfo(packageName, 0).versionName;
         } catch (PackageManager.NameNotFoundException e) {
-            return "0.0.00";
+            return "0.0.0";
         }
     }
 

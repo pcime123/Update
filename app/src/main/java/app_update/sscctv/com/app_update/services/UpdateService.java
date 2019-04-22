@@ -49,19 +49,19 @@ public class UpdateService {
     }
 
     public interface UpdateApi {
-        @GET("/update_new/channels.json")
+        @GET("/Update_Server/IPM07PRO/channels.json")
         Observable<List<Channel>>
             getChannels();
 
-        @GET("/update_new/channels/{name}.json")
+        @GET("/Update_Server/IPM07PRO/channels/{name}.json")
         Observable<Channel>
             getChannel(@Path("name") String channelName);
 
-        @GET("/update_new/releases/{package}.json")
+        @GET("/Update_Server/IPM07PRO/releases/{package}.json")
         Observable<Map<String, Release>>
             getReleases(@Path("package") String packageId);
 
-        @GET("/update_new/releases/{releaseUrl}")
+        @GET("/Update_Server/IPM07PRO/releases/{releaseUrl}")
         @Streaming
         Observable<ResponseBody>
             download(@Path(value = "releaseUrl") String releaseUrl);

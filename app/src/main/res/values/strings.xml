@@ -27,12 +27,12 @@
     <string name="check">Check</string>
     <string name="update">Update</string>
     <string name="ip_app_update">IP App Update</string>
-    <string name="launcher_update">Launcher Update</string>
     <string name="manual_update">Manual Update</string>
     <string name="tdrc_app_update">TDRC App Update</string>
     <string name="tdru_app_update">TDRU App Update</string>
     <string name="update_app_update">Update App Update</string>
     <string name="viewer_app_update">Viewer App Update</string>
-    <string name="packet_update">Packet App Update</string>
+    <string name="packet_app_update">Packet App Update</string>
+    <string name="launcher_app_update">Launcher Update</string>
     <string name="packet_app" translatable="false">Packet Tool</string>
 </resources>
